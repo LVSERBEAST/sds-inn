@@ -13,75 +13,70 @@ public class Inventory
 
     public void UpdateQuality()
     {
-        var items = _itemProvider.GetItems().ToArray();
+        var items = _itemProvider.GetItems();
 
-        for (var i = 0; i < items.Count(); i++)
+        foreach (var item in items)
         {
-            if (items[i].Name != "Aged Brie" && items[i].Name != "Backstage Passes")
+            switch(item.Name)
             {
-                if (items[i].Quality > 0)
-                {
-                    if (items[i].Name != "Sulfuras")
-                    {
-                        items[i].Quality = items[i].Quality - 1;
-                    }
-                }
+                case "Aged Brie":
+                    UpdateQualityAgedBrie(item);
+                    break;
+                case "Backstage passes":
+                    UpdateQualityBackstagePasses(item);
+                    break;
+                case "Conjured":
+                    UpdateQualityConjured(item);
+                    break;
+                case "Sulfuras":
+                    break;
+                default:
+                    UpdateQualityDefault(item);
+                    break;
             }
-            else
-            {
-                if (items[i].Quality < 50)
-                {
-                    items[i].Quality = items[i].Quality + 1;
-                    if (items[i].Name == "Backstage Passes")
-                    {
-                        if (items[i].SellIn < 11)
-                        {
-                            if (items[i].Quality < 50)
-                            {
-                                items[i].Quality = items[i].Quality + 1;
-                            }
-                        }
-                        if (items[i].SellIn < 6)
-                        {
-                            if (items[i].Quality < 50)
-                            {
-                                items[i].Quality = items[i].Quality + 1;
-                            }
-                        }
-                    }
-                }
-            }
-            if (items[i].Name != "Sulfuras")
-            {
-                items[i].SellIn = items[i].SellIn - 1;
-            }
-            if (items[i].SellIn < 0)
-            {
-                if (items[i].Name != "Aged Brie")
-                {
-                    if (items[i].Name != "Backstage passes")
-                    {
-                        if (items[i].Quality > 0)
-                        {
-                            if (items[i].Name != "Sulfuras")
-                            {
-                                items[i].Quality = items[i].Quality - 1;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        items[i].Quality = items[i].Quality - items[i].Quality;
-                    }
-                }
-                else
-                {
-                    if (items[i].Quality < 50)
-                    {
-                        items[i].Quality = items[i].Quality + 1;
-                    }
-                }
-            }
+
+            if (item.Quality < 1)
+                item.Quality = 0;
+
+            item.SellIn = --item.SellIn;
+
+            if (item.SellIn < 1)
+                item.SellIn = 0;
         }
+    }
+
+    public void UpdateQualityDefault(Item item)
+    {
+        if (item.SellIn > 0)
+            --item.Quality;
+        else
+            item.Quality = item.Quality - 2;
+
+        if (item.Quality < 1)
+            item.Quality = 0;
+    }
+
+    public void UpdateQualityAgedBrie(Item item)
+    {
+        if (item.SellIn > 0)
+            ++item.Quality;
+        else
+            item.Quality = item.Quality - 2;
+    }
+
+    public void UpdateQualityBackstagePasses(Item item)
+    {
+        if (item.SellIn > 0)
+            ++item.Quality;
+        else
+            item.Quality = 0;
+    }
+
+    public void UpdateQualityConjured(Item item)
+    {
+        if (item.SellIn > 0)
+            item.Quality = item.Quality - 2;
+        else
+            item.Quality = item.Quality - 4;
     }
 }
