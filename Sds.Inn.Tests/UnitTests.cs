@@ -5,7 +5,8 @@ namespace Sds.Inn.Tests
     public class UnitTests
     {
         private static ItemProvider itemProvider = new ItemProvider();
-        private static Inventory inventory = new Inventory(itemProvider);
+        private static ItemRuleProvider itemRuleProvider = new ItemRuleProvider();
+        private static Inventory inventory = new Inventory(itemProvider, itemRuleProvider);
 
         [Fact]
         public void UpdateQualityTest()
